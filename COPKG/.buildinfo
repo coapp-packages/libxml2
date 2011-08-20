@@ -10,6 +10,9 @@
 
 x86 {
     compiler: vc10-x86;
+
+    uses:mingw=@"..\libiconv";
+    uses:x86=@"..\zlib";
     
     targets: {
 		"win32\bin.msvc\libxml2.dll",
