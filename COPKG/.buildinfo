@@ -9,7 +9,7 @@
 
 
 x86 {
-    compiler: vc10-x86;
+    compiler: vc10;
 
     uses:mingw=@"..\libiconv";
     uses:x86=@"..\zlib";
