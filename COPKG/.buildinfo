@@ -1,6 +1,6 @@
 #product-info  {
 	product-name: "libxml2";
-	version: "1.2.8";
+	version: "2.7.8";
 	original-source-location: "git://git.gnome.org/libxml2";
 	original-source-website: "http://git.gnome.org/browse/libxml2/";
 	license: "X11 license";
