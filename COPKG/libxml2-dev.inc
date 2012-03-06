@@ -1,0 +1,49 @@
+@import "version.inc" ;
+@import "outercurve.inc" ;
+
+package {
+    name: "libxml2-dev[${flavor}]";
+    version: "${package-version}";
+    arch : "${arch}";
+
+    display-name: "libxml2 developer library";
+}
+
+metadata {
+    summary: "The libxml2 developer library";
+    description: @"libxml2"; 
+
+    icon: @"libxml2.png";
+    
+    author-version : "2.7.8";
+    bug-tracker: "https://github.com/coapp-packages/libxml2/issues";
+    stability : "0";
+    licenses : {
+        MIT
+    };
+}
+
+requires {
+    package: "libxml2-dev-common-${package-version}-any-${Package.PublicKeyToken}";
+    package: "libxml2[${flavor}]-${package-version}-${Package.Architecture}-${Package.PublicKeyToken}";
+	package: "libiconv-dev-common-1.13.1.1-any-${Package.PublicKeyToken}";
+    package: "libiconv[${flavor}]-1.13.1.1-${Package.Architecture}-${Package.PublicKeyToken}";
+	package: "zlib-dev-common-1.2.5.34-any-${Package.PublicKeyToken}";
+    package: "zlib[${flavor}]-1.2.5.34-${Package.Architecture}-${Package.PublicKeyToken}";
+}
+
+files[libs] {
+    root: @"..\${arch}\bin.msvc\";
+    
+    include: {
+        "libxml2.lib",
+    };
+    
+    trim-path: all;
+};
+
+developer-library[libxml2] {
+    libraries : {
+        libs,
+    };
+}

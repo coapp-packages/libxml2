@@ -1,0 +1,59 @@
+@import "version.inc" ;
+@import "outercurve.inc" ;
+
+package {
+    name: "libxml2-dev-common";
+    version: "${package-version}";
+    arch: any;
+    display-name: "libxml2 Dev Library-common";
+}
+
+metadata {
+    summary: "The libxml2 developer library (common)";
+    description: @"libxml2"; 
+        
+    icon: @"libxml2.png";
+    
+    author-version : "2.7.8";
+    bug-tracker: "https://github.com/coapp-packages/libxml2/issues";
+    stability : "0";
+    licenses : {
+        MIT
+    };
+}
+
+files[headers] {
+    root: "..\\include\\libxml";
+    include: {
+        "*.h"
+    };
+    
+    trim-path:all;
+    
+    // ensures that all the header files end up in a subfolder called 'include'
+    destination-path:"include";
+}
+
+files[docs] {
+    root: "..\\doc\\";
+    include: {
+        "*"
+    };
+    
+    trim-path:all;
+    
+    // ensures that all the documentation files end up in a subfolder called 'docs'
+    destination-path:"docs";
+
+}
+
+// the 'name' of the developer library isn't terribly important...
+developer-library[libxml2] {
+    headers: { 
+        headers
+    };
+    
+    docs: {
+        docs
+    };
+}

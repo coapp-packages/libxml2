@@ -1,3 +1,5 @@
+@import "version.inc";
+
 #product-info  {
 	product-name: "libxml2";
 	version: "2.7.8";
@@ -7,6 +9,73 @@
 	packager: "Vincent Povirk <madewokherd@gmail.com>";
 }
 
+test {
+    default : false;
+    uses: release;
+    build-command: @"rem";
+};
+
+package {
+    
+    default : false;
+    uses : sign;
+    
+    targets: { 
+        @"copkg\libxml2[vc10]-${package-version}-x86.msi",
+        @"copkg\libxml2-dev[vc10]-${package-version}-x86.msi",
+        @"copkg\libxml2-dev-common-${package-version}-any.msi",
+        @"copkg\libxml2[vc10]-${package-version}-x64.msi",
+        @"copkg\libxml2-dev[vc10]-${package-version}-x64.msi"
+    };
+    
+    build-command : @"
+        REM THERE IS SOME GOOFY STUFF IN HERE TO WORK AROUND A COUPLE BUGS IN AUTOPACKAGE.
+        REM FIXES COMING SOON...
+        cd COPKG
+        coapp add-feed %cd%\
+        coapp --force-scan list 
+        autopackage libxml2-dev-common.autopkg || goto failed
+        coapp --force-scan list 
+        autopackage libxml2[vc10]-x86.autopkg libxml2-dev[vc10]-x86.autopkg || goto failed
+        coapp --force-scan list 
+        autopackage libxml2[vc10]-x64.autopkg libxml2-dev[vc10]-x64.autopkg || goto failed
+        coapp --force-scan list 
+        coapp remove-feed %cd%\
+        ptk update-version
+    ";
+
+	clean-command: @"del COPKG\*.msi COPKG\*.wixpdb";
+	
+};
+
+
+update-version {
+    default : false;
+    
+    build-command : @"
+        REM auto-increment version.inc file...
+        
+        cd COPKG
+        setlocal EnableDelayedExpansion
+        for /F ""tokens=4,5,6,7  delims=.; "" %%v in (version.inc) do (
+            set /a build=%%y + 1
+            set VERSTRING=#define { package-version: %%v.%%w.%%x.!build!; }
+        )
+        echo !VERSTRING! > version.inc
+    ";
+}
+
+release {
+    set: BuildCfg="Release";
+    uses: x86-vc;
+    uses: x64-vc;
+};
+
+sign {
+    default : false;
+    uses: release;
+    build-command: @"simplesigner.exe --nologo --sign x64\bin.msvc\**.dll x86\bin.msvc\**.dll x64\bin.msvc\**.exe x86\bin.msvc\**.exe";
+};
 
 x86 {
     compiler: vc10;
@@ -51,17 +120,24 @@ x86-vc {
     uses:x86=@"..\zlib";
     
     targets: {
-		"win32\bin.msvc\libxml2.dll",
-		"win32\bin.msvc\libxml2.lib",
-		"win32\bin.msvc\libxml2_a.lib",
-		"win32\bin.msvc\libxml2_a_dll.lib",
-		"win32\bin.msvc\xmlcatalog.exe",
-		"win32\bin.msvc\xmllint.exe",
+		"x86\bin.msvc\libxml2.dll",
+		"x86\bin.msvc\libxml2.lib",
+		"x86\bin.msvc\libxml2_a.lib",
+		"x86\bin.msvc\libxml2_a_dll.lib",
+		"x86\bin.msvc\xmlcatalog.exe",
+		"x86\bin.msvc\xmllint.exe",
 	};
 	
     build-command:@"
-        cd win32
-		cscript configure.js zlib=yes include=../../libiconv/include;../../zlib lib=../../libiconv/Release/win32;../../zlib/contrib/vstudio/vc10/x86/ZlibDllRelease
+           mkdir x86
+           copy win32\wince x86\wince
+           copy win32\configure.js x86\configure.js 
+           copy win32\defgen.xsl x86\defgen.xsl 
+           copy win32\libxml2.def.src x86\libxml2.def.src 
+           copy win32\Makefile.msvc x86\Makefile.msvc
+
+           cd x86
+		cscript configure.js zlib=yes include=../../libiconv/include;../../zlib lib=../../libiconv/Release/x86;../../zlib/output/vc10/x86/release/lib
 		nmake /f Makefile.msvc
 	";
     
@@ -69,15 +145,10 @@ x86-vc {
 		rem We can't do a make clean because it'll fail without configure.
 		erase config.h > nul 2> nul
 		erase include\libxml\xmlversion.h > nul 2> nul
-		erase win32\Makefile > nul 2> nul
-		erase win32\config.msvc > nul 2> nul
-        if exist win32\bin.msvc rmdir /s /q win32\bin.msvc > nul 2> nul
-        if exist win32\int.a.dll.msvc rmdir /s /q win32\int.a.dll.msvc > nul 2> nul
-        if exist win32\int.a.msvc rmdir /s /q win32\int.a.msvc > nul 2> nul
-        if exist win32\int.msvc rmdir /s /q win32\int.msvc > nul 2> nul
-        if exist win32\int.utils.msvc rmdir /s /q win32\int.utils.msvc > nul 2> nul
+        if exist x86 rmdir /s /q x86 > nul 2> nul
     ";
 };
+
 
 x64-vc {
     compiler: vc10;
@@ -104,7 +175,7 @@ x64-vc {
            copy win32\Makefile.msvc x64\Makefile.msvc
 
            cd x64
-		cscript configure.js zlib=yes include=../../libiconv/include;../../zlib lib=../../libiconv/Release/x64;../../zlib/contrib/vstudio/vc10/x64/ZlibDllRelease
+		cscript configure.js zlib=yes include=../../libiconv/include;../../zlib lib=../../libiconv/Release/x64;../../zlib/output/vc10/x64/release/lib
 		nmake /f Makefile.msvc
 	";
     

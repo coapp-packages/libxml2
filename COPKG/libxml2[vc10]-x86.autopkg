@@ -1,0 +1,8 @@
+// details for x86 version of libxml2 package
+// build with: autopackage x86.autopkg libxml2.autopkg  
+@import "libxml2.inc";
+
+#define { 
+    flavor: "vc10"; 
+    arch : "x86";
+}

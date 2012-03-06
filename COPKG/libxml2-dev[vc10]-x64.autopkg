@@ -1,0 +1,9 @@
+// details for x64 version of libxml2 package
+// build with: autopackage libxml2-dev[vc10]-x64.autopkg
+@import "libxml2-dev.inc" ;
+
+#define { 
+    flavor: "vc10"; 
+    arch : "x64";
+}
+
