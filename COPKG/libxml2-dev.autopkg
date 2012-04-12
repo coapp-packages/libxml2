@@ -2,6 +2,11 @@
 @import "compat.inc";
 @import "outercurve.inc" ;
 
+#define { 
+    flavor: "${comp??vc10}"; 
+    arch : "${plat??x86}";
+}
+
 package {
     name: "libxml2-dev[${flavor}]";
     version: "${package-version}";
