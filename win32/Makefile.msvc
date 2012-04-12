@@ -69,7 +69,7 @@ LIBS =
 LIBS = $(LIBS) wsock32.lib ws2_32.lib
 !endif 
 !if "$(WITH_ICONV)" == "1"
-LIBS = $(LIBS) libiconv.dll.a
+LIBS = $(LIBS) libiconv.lib
 !endif 
 !if "$(WITH_ICU)" == "1"
 LIBS = $(LIBS) icu.lib

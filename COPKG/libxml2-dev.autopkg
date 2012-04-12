@@ -1,4 +1,5 @@
 @import "version.inc" ;
+@import "compat.inc";
 @import "outercurve.inc" ;
 
 package {
@@ -26,14 +27,14 @@ metadata {
 requires {
     package: "libxml2-dev-common-${package-version}-any-${Package.PublicKeyToken}";
     package: "libxml2[${flavor}]-${package-version}-${Package.Architecture}-${Package.PublicKeyToken}";
-	package: "libiconv-dev-common-1.13.1.1-any-${Package.PublicKeyToken}";
-    package: "libiconv[${flavor}]-1.13.1.1-${Package.Architecture}-${Package.PublicKeyToken}";
-	package: "zlib-dev-common-1.2.5.34-any-${Package.PublicKeyToken}";
-    package: "zlib[${flavor}]-1.2.5.34-${Package.Architecture}-${Package.PublicKeyToken}";
+	package: "libiconv-dev-common-1.13.1-any-${Package.PublicKeyToken}";
+    package: "libiconv[${flavor}]-1.13.1-${Package.Architecture}-${Package.PublicKeyToken}";
+	package: "zlib-dev-common-1.2.5-any-${Package.PublicKeyToken}";
+    package: "zlib[${flavor}]-1.2.5-${Package.Architecture}-${Package.PublicKeyToken}";
 }
 
 files[libs] {
-    root: @"..\${arch}\bin.msvc\";
+    root: @"..\${flavor}-${arch}\bin.msvc\";
     
     include: {
         "libxml2.lib",
@@ -42,7 +43,7 @@ files[libs] {
     trim-path: all;
 };
 
-developer-library[libxml2] {
+developer-library[libxml2[${flavor}]] {
     libraries : {
         libs,
     };

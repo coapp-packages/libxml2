@@ -1,5 +1,11 @@
 @import "version.inc";
+@import "compat.inc";
 @import "outercurve.inc";
+
+#define { 
+    flavor: "${comp??vc10}"; 
+    arch : "${plat??x86}";
+}
 
 package {
     name: "libxml2[${flavor}]";
@@ -20,12 +26,13 @@ license[MIT] {
 
 files[files-to-sign] {
     include: { 
-        dlls
+        dlls,
+        exes
     };    
 }
 
 files[dlls] {
-    root: @"..\${arch}\bin.msvc\";
+    root: @"..\${flavor}-${arch}\bin.msvc\";
   
     include: {
         "libxml2.dll",
@@ -35,7 +42,7 @@ files[dlls] {
 };
 
 files[exes] {
-    root: @"..\${arch}\bin.msvc\";
+    root: @"..\${flavor}-${arch}\bin.msvc\";
   
     include: {
         "xmlcatalog.exe",
@@ -46,8 +53,8 @@ files[exes] {
 };
 
 requires {
-    package: "zlib[${flavor}]-1.2.5.34-${Package.Architecture}-${Package.PublicKeyToken}";
-	package: "libiconv[${flavor}]-1.13.1.1-${Package.Architecture}-${Package.PublicKeyToken}";
+    package: "zlib[${flavor}]-1.2.5-${Package.Architecture}-${Package.PublicKeyToken}";
+	package: "libiconv[${flavor}]-1.13.1-${Package.Architecture}-${Package.PublicKeyToken}";
 }
 
 
@@ -77,19 +84,11 @@ package-composition {
     };
 }
 
-compatability-policy {
-    minimum: "2.7.0.0";
-    maximum: "${OneLessThanCurrent}"; // this is the default
-    versions : {
-        "2.7",
-    }; // if not specified, find the versions by looking at the feeds and finding all the major/minor versions in range.
-}
-
 manifest[things-that-need-them] {
     // all of our EXEs need to get the manifest entries for the assemblies we're creating in this package
     
     assembly : {
-        libxml2,
+        "libxml2[${flavor}]",
     };
     
     include : { 
@@ -101,16 +100,17 @@ manifest[things-that-need-them2] {
     // all of our EXEs need to get the manifest entries for the assemblies we're creating in this package
     
     assembly : {
-        zlib,
-		libiconv,
+        "zlib[${flavor}]",
+		"libiconv[${flavor}]",
     };
     
     include : { 
-        dlls
+        dlls,
+        exes
     };
 }
 
-assembly[libxml2] {
+assembly[libxml2[${flavor}]] {
     include : {
         dlls
     };
