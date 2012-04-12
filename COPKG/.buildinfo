@@ -69,7 +69,6 @@ package {
     };
     
     build-command : @"
-        if ""${BUILT}"" neq ""true"" ptk sign --nologo --COMP=""${COMP}"" --PLAT=""${PLAT}""
         cd COPKG
         autopackage libxml2-dev-common.autopkg || goto failed
         for %%A in (${COMP}) do (
@@ -127,8 +126,14 @@ release {
 
 sign {
     default : false;
-    uses: release;
-    build-command: @"simplesigner.exe --nologo --sign x64\bin.msvc\**.dll x86\bin.msvc\**.dll x64\bin.msvc\**.exe x86\bin.msvc\**.exe";
+    build-command: @"
+        if ""${BUILT}"" neq ""true"" ptk release --nologo --COMP=""${COMP}"" --PLAT=""${PLAT}""
+        for %%A in (${COMP}) do (
+            for %%B in (${PLAT}) do (
+                simplesigner.exe --nologo --sign %%A-%%B\bin.msvc\**.dll %%A-%%B\bin.msvc\**.exe
+            )
+        )
+        ";
 };
 
 x86-old {
