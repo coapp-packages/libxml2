@@ -1,5 +1,7 @@
 @import "version.inc";
 
+#define {    NewVersion : "${package-version++}";}
+
 #product-info  {
 	product-name: "libxml2";
 	version: "2.7.8";
@@ -53,7 +55,10 @@ test {
 package {
     
     default : false;
-    uses : sign;
+    uses : {
+        update-version,
+        sign,
+    };
     
     set: {
         COMP="${COMP??vc10}";
@@ -61,11 +66,8 @@ package {
     };
 
     targets: { 
-        @"copkg\libxml2[vc10]-${package-version}-x86.msi",
-        @"copkg\libxml2-dev[vc10]-${package-version}-x86.msi",
-        @"copkg\libxml2-dev-common-${package-version}-any.msi",
-        @"copkg\libxml2[vc10]-${package-version}-x64.msi",
-        @"copkg\libxml2-dev[vc10]-${package-version}-x64.msi"
+        (COMP,PLAT) => @"copkg\libxml2[${0}]-${NewVersion}-${1}.msi",
+        (COMP,PLAT) => @"copkg\libxml2-dev[${0}]-${NewVersion}-${1}.msi",
     };
     
     build-command : @"
@@ -76,7 +78,6 @@ package {
                 autopackage --COMP=%%A --PLAT=%%B libxml2.autopkg libxml2-dev.autopkg || goto failed
             )
         )
-        ptk update-version
     ";
 
 	clean-command: @"del COPKG\*.msi COPKG\*.wixpdb";
@@ -89,14 +90,13 @@ update-version {
     
     build-command : @"
         REM auto-increment version.inc file...
-        
-        cd COPKG
+        if ""${noversion}"" == ""true"" goto :endver
+        pushd COPKG
         setlocal EnableDelayedExpansion
-        for /F ""tokens=4,5,6,7  delims=.; "" %%v in (version.inc) do (
-            set /a build=%%y + 1
-            set VERSTRING=#define { package-version: %%v.%%w.%%x.!build!; }
-        )
+        set VERSTRING=#define { package-version: ${NewVersion}; }
         echo !VERSTRING! > version.inc
+        popd
+        :endver
     ";
 }
 
@@ -134,44 +134,6 @@ sign {
             )
         )
         ";
-};
-
-x86-old {
-    compiler: vc10;
-
-    requires: "libiconv-dev[vc10]-1.13.1-x86-1e373a58e25250cb";
-    requires: "zlib-dev[vc10]-1.2.5-x86-1e373a58e25250cb";
-    
-    targets: {
-		"win32\bin.msvc\libxml2.dll",
-		"win32\bin.msvc\libxml2.lib",
-		"win32\bin.msvc\libxml2_a.lib",
-		"win32\bin.msvc\libxml2_a_dll.lib",
-		"win32\bin.msvc\xmlcatalog.exe",
-		"win32\bin.msvc\xmllint.exe",
-	};
-	
-    build-command:@"
-        REM this makes it so that DLLs can have their own SxS Activation Context in an embedded resource.
-		echo %_CL% | findstr ISOLATION_AWARE || set _CL=%CL% /D ISOLATION_AWARE_ENABLED
-
-        cd win32
-		cscript configure.js zlib=yes ""include=%AllUsersProfile%/include/libiconv;%AllUsersProfile%/include/zlib"" ""lib=%AllUsersProfile%/lib/x86""
-		nmake /f Makefile.msvc
-	";
-    
-    clean-command:@"
-		rem We can't do a make clean because it'll fail without configure.
-		erase config.h > nul 2> nul
-		erase include\libxml\xmlversion.h > nul 2> nul
-		erase win32\Makefile > nul 2> nul
-		erase win32\config.msvc > nul 2> nul
-        if exist win32\bin.msvc rmdir /s /q win32\bin.msvc > nul 2> nul
-        if exist win32\int.a.dll.msvc rmdir /s /q win32\int.a.dll.msvc > nul 2> nul
-        if exist win32\int.a.msvc rmdir /s /q win32\int.a.msvc > nul 2> nul
-        if exist win32\int.msvc rmdir /s /q win32\int.msvc > nul 2> nul
-        if exist win32\int.utils.msvc rmdir /s /q win32\int.utils.msvc > nul 2> nul
-    ";
 };
 
 base {
