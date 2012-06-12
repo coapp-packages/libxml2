@@ -54,7 +54,7 @@ files[exes] {
 
 requires {
     package: "zlib[${flavor}]-1.2.5-${Package.Architecture}-${Package.PublicKeyToken}";
-	package: "libiconv[${flavor}]-1.13.1-${Package.Architecture}-${Package.PublicKeyToken}";
+	package: "libiconv[${flavor}]-1.14.0-${Package.Architecture}-${Package.PublicKeyToken}";
 }
 
 

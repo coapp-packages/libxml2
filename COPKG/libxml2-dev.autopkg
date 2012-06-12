@@ -32,8 +32,8 @@ metadata {
 requires {
     package: "libxml2-dev-common-${package-version}-any-${Package.PublicKeyToken}";
     package: "libxml2[${flavor}]-${package-version}-${Package.Architecture}-${Package.PublicKeyToken}";
-	package: "libiconv-dev-common-1.13.1-any-${Package.PublicKeyToken}";
-    package: "libiconv[${flavor}]-1.13.1-${Package.Architecture}-${Package.PublicKeyToken}";
+	package: "libiconv-dev-common-1.14.0-any-${Package.PublicKeyToken}";
+    package: "libiconv[${flavor}]-1.14.0-${Package.Architecture}-${Package.PublicKeyToken}";
 	package: "zlib-dev-common-1.2.5-any-${Package.PublicKeyToken}";
     package: "zlib[${flavor}]-1.2.5-${Package.Architecture}-${Package.PublicKeyToken}";
 }

@@ -26,7 +26,7 @@ test {
                 for %%E in (runtest.exe, runsuite.exe, testapi.exe, testThreadsWin32.exe) do (
                     coapp create-symlink %CD%\%%A-%%B\bin.msvc\%%E %CD%\%%E
                     REM mklink %%E .\%%A-%%B\bin.msvc\%%E
-                    simplesigner --nologo --reference-assembly=""zlib[%%A], Version=1.2.5.0, PublicKeyToken=1e373a58e25250cb, ProcessorArchitecture=%%B"" --reference-assembly=""libiconv[%%A], Version=1.13.1.0, PublicKeyToken=1e373a58e25250cb, ProcessorArchitecture=%%B"" %%E || goto failed
+                    simplesigner --nologo --reference-assembly=""zlib[%%A], Version=1.2.5.0, PublicKeyToken=1e373a58e25250cb, ProcessorArchitecture=%%B"" --reference-assembly=""libiconv[%%A], Version=1.14.0.0, PublicKeyToken=1e373a58e25250cb, ProcessorArchitecture=%%B"" %%E || goto failed
                 )
                 coapp create-symlink %CD%\%%A-%%B\bin.msvc\libxml2.dll %CD%\libxml2.dll
                 echo Running TestAPI...
@@ -145,7 +145,7 @@ base {
     compiler: "${COMP}";
     platform: "${PLAT}";
 
-    requires: "libiconv-dev[${COMP}]-1.13.1-${PLAT}-1e373a58e25250cb";
+    requires: "libiconv-dev[${COMP}]-1.14.0-${PLAT}-1e373a58e25250cb";
     requires: "zlib-dev[${COMP}]-1.2.5-${PLAT}-1e373a58e25250cb";
     
     targets: {
