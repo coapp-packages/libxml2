@@ -41,8 +41,7 @@ files[docs] {
     trim-path:all;
 }
 
-// the 'name' of the developer library isn't terribly important...
-developer-library[libxml2] {
+developer-library[libxml] {
     headers: { 
         headers
     };
