@@ -42,6 +42,7 @@ files[libs] {
     root: @"..\${flavor}-${arch}\bin.msvc\";
     
     include: {
+        "libxml2.lib",
         "libxml2_a_dll.lib",
     };
     
