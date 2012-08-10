@@ -158,7 +158,7 @@ base {
 	
     build-command:@"
         REM this makes it so that DLLs can have their own SxS Activation Context in an embedded resource.
-        echo %CL% | findstr ISOLATION_AWARE || set CL=%CL% -D ISOLATION_AWARE_ENABLED
+        echo %CL% | findstr ISOLATION_AWARE || set CL=%CL% /D ISOLATION_AWARE_ENABLED /U NOUSER 
 
         mkdir ${COMP}-${PLAT}
             copy win32\wince ${COMP}-${PLAT}\wince
