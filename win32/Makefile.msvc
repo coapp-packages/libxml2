@@ -376,7 +376,7 @@ $(BINDIR)\$(XML_A) : $(BINDIR) $(XML_OBJS_A)
 
 # Creates the libxml static for dll archive.
 $(BINDIR)\$(XML_A_DLL) : $(BINDIR) $(XML_OBJS_A_DLL)
-	$(AR) $(ARFLAGS) /OUT:$(BINDIR)\$(XML_A_DLL) $(XML_OBJS_A_DLL)
+	$(AR) $(ARFLAGS) /DEF:$(XML_INTDIR)\$(XML_DEF) /OUT:$(BINDIR)\$(XML_A_DLL) $(XML_OBJS_A_DLL)
 
 # Makes the utils intermediate directory.
 $(UTILS_INTDIR) :
