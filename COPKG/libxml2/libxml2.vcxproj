@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{785E69F2-3919-4BC2-A4B1-0EB81DC3AD2C}</ProjectGuid>
+    <RootNamespace>libxml2</RootNamespace>
+    <ProjectName>$(RootNamespace)</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="ConfigurationSettings">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <CallingConvention>Cdecl</CallingConvention>
+    <LibName>libbz2</LibName>
+  </PropertyGroup>
+  <Target Name="Info" BeforeTargets="Build">
+    <Message Text="  Configuration     :  '$(Configuration)'" />
+    <Message Text="  PlatformToolset   :  '$(PlatformToolset)'" />
+    <Message Text="  Platform          :  '$(Platform)'" />
+    <Message Text="  ConfigurationType :  '$(ConfigurationType)'" />
+    <Message Text="  CallingConvention :  '$(CallingConvention)'" />
+    <Message Condition="exists('$(MSBuildThisFileDirectory)\packages\libiconv.redist\build\native\libiconv.redist.targets')" 
+             Text="  libiconv :  'Exists'" />
+    <Message Condition="exists('$(MSBuildThisFileDirectory)\packages\zlib.redist\build\native\zlib.redist.targets')" 
+             Text="  zlib :  'Exists'" />
+  </Target>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup>
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <LinkIncremental Condition="'$(Configuration)'=='Release'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)'=='Debug'">true</LinkIncremental>
+    <OutNameSuffix Condition="'$(CallingConvention)|$(ConfigurationType)'=='Cdecl|DynamicLibrary'"></OutNameSuffix>
+    <OutNameSuffix Condition="'$(CallingConvention)|$(ConfigurationType)'=='Cdecl|StaticLibrary'">-static</OutNameSuffix>
+    <OutNameSuffix Condition="'$(CallingConvention)|$(ConfigurationType)'=='Cdecl|ltcg'">-static-ltcg</OutNameSuffix>
+    <OutNameSuffix Condition="'$(CallingConvention)|$(ConfigurationType)'=='stdcall|DynamicLibrary'">-stdcall</OutNameSuffix>
+    <OutNameSuffix Condition="'$(CallingConvention)|$(ConfigurationType)'=='stdcall|StaticLibrary'">-static-stdcall</OutNameSuffix>
+    <OutNameSuffix Condition="'$(CallingConvention)|$(ConfigurationType)'=='stdcall|ltcg'">-static-stdcall-ltcg</OutNameSuffix>
+    <OutName>$(ProjectName)$(OutNameSuffix)</OutName>
+    <OutDir>..\..\Output\$(PlatformToolset)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>.\$(PlatformToolset)\$(Platform)\$(Configuration)\$(ConfigurationType)\$(CallingConvention)\$(ProjectName)\</IntDir>
+    <OutBinDir>$(OutDir)bin\</OutBinDir>
+    <OutLibDir>$(OutDir)lib\</OutLibDir>
+    <TargetName>lib\$(OutName)</TargetName>
+    <CallingConvention-zlib>%(CallingConvention)</CallingConvention-zlib>
+    <Linkage-zlib Condition="'$(ConfigurationType)'=='DynamicLibrary'">dynamic</Linkage-zlib>
+    <Linkage-zlib Condition="'$(ConfigurationType)'=='StaticLibrary'">static</Linkage-zlib>
+    <Linkage-zlib Condition="'$(ConfigurationType)'=='ltcg'">static</Linkage-zlib>
+    <CallingConvention-libiconv>%(CallingConvention)</CallingConvention-libiconv>
+    <Linkage-libiconv Condition="'$(ConfigurationType)'=='DynamicLibrary'">dynamic</Linkage-libiconv>
+    <Linkage-libiconv Condition="'$(ConfigurationType)'=='StaticLibrary'">static</Linkage-libiconv>
+    <Linkage-libiconv Condition="'$(ConfigurationType)'=='ltcg'">static</Linkage-libiconv>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\;..\..\;..\..\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;NOLIBTOOL;_WINDOWS;_MBCS;HAVE_WIN32_THREADS;HAVE_ZLIB_H;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary Condition="'$(Configuration)|$(ConfigurationType)'=='Debug|DynamicLibrary'">MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)|$(ConfigurationType)'=='Debug|StaticLibrary' Or '$(Configuration)|$(ConfigurationType)'=='Debug|ltcg'">MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)|$(ConfigurationType)'=='Release|DynamicLibrary'">MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)|$(ConfigurationType)'=='Release|StaticLibrary' Or '$(Configuration)|$(ConfigurationType)'=='Release|ltcg'">MultiThreaded</RuntimeLibrary>
+      <CallingConvention>%(CallingConvention)</CallingConvention>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>wsock32.lib;ws2_32.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImportLibrary>
+      </ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\c14n.c" />
+	<ClCompile Include="..\..\catalog.c" />
+	<ClCompile Include="..\..\chvalid.c" />
+	<ClCompile Include="..\..\debugXML.c" />
+	<ClCompile Include="..\..\dict.c" />
+	<ClCompile Include="..\..\DOCBparser.c" />
+	<ClCompile Include="..\..\encoding.c" />
+	<ClCompile Include="..\..\entities.c" />
+	<ClCompile Include="..\..\error.c" />
+	<ClCompile Include="..\..\globals.c" />
+	<ClCompile Include="..\..\hash.c" />
+	<ClCompile Include="..\..\HTMLparser.c" />
+	<ClCompile Include="..\..\HTMLtree.c" />
+	<ClCompile Include="..\..\legacy.c" />
+	<ClCompile Include="..\..\list.c" />
+	<ClCompile Include="..\..\nanoftp.c" />
+	<ClCompile Include="..\..\nanohttp.c" />
+	<ClCompile Include="..\..\parser.c" />
+	<ClCompile Include="..\..\parserInternals.c" />
+	<ClCompile Include="..\..\pattern.c" />
+	<ClCompile Include="..\..\relaxng.c" />
+	<ClCompile Include="..\..\SAX2.c" />
+	<ClCompile Include="..\..\SAX.c" />
+	<ClCompile Include="..\..\schematron.c" />
+	<ClCompile Include="..\..\threads.c" />
+	<ClCompile Include="..\..\tree.c" />
+	<ClCompile Include="..\..\uri.c" />
+	<ClCompile Include="..\..\valid.c" />
+	<ClCompile Include="..\..\xinclude.c" />
+	<ClCompile Include="..\..\xlink.c" />
+	<ClCompile Include="..\..\xmlIO.c" />
+	<ClCompile Include="..\..\xmlmemory.c" />
+	<ClCompile Include="..\..\xmlmodule.c" />
+	<ClCompile Include="..\..\xmlreader.c" />
+	<ClCompile Include="..\..\xmlregexp.c" />
+	<ClCompile Include="..\..\xmlsave.c" />
+	<ClCompile Include="..\..\xmlschemas.c" />
+	<ClCompile Include="..\..\xmlschemastypes.c" />
+	<ClCompile Include="..\..\xmlunicode.c" />
+	<ClCompile Include="..\..\xmlwriter.c" />
+	<ClCompile Include="..\..\xpath.c" />
+	<ClCompile Include="..\..\xpointer.c" />
+	<ClCompile Include="..\..\xmlstring.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Condition="exists('$(MSBuildThisFileDirectory)\packages\zlib\build\native\zlib.targets')" Project="$(MSBuildThisFileDirectory)\packages\zlib\build\native\zlib.targets" />
+  <Import Condition="exists('$(MSBuildThisFileDirectory)\packages\zlib.redist\build\native\zlib.redist.targets')" Project="$(MSBuildThisFileDirectory)\packages\zlib.redist\build\native\zlib.redist.targets" />
+  <Import Condition="exists('$(MSBuildThisFileDirectory)\packages\libiconv\build\native\libiconv.targets')" Project="$(MSBuildThisFileDirectory)\packages\libiconv\build\native\libiconv.targets" />
+  <Import Condition="exists('$(MSBuildThisFileDirectory)\packages\libiconv.redist\build\native\libiconv.redist.targets')" Project="$(MSBuildThisFileDirectory)\packages\libiconv.redist\build\native\libiconv.redist.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+  <Target Name="Version_File">
+    <Exec 
+        Command="
+            cscript configure.js zlib=yes >nul
+        "
+        WorkingDirectory="$(MSBuildThisFileDirectory)..\..\win32\" />
+  </Target>
+  <PropertyGroup>
+    <BuildDependsOn>Version_File;Info;$(BuildDependsOn)</BuildDependsOn>
+  </PropertyGroup>
+</Project>
