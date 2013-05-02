@@ -40,6 +40,5 @@ msbuild /P:Platform=%1 /P:Configuration=%2 /P:PlatformToolset=%3 /P:Configuratio
 goto :eof
 
 :clean
-rd /s /q libxml2\v100
-rd /s /q libxml2\v110
+rd /s /q libxml2\Intermediate
 

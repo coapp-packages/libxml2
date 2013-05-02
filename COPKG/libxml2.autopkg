@@ -1,132 +1,135 @@
-@import "version.inc";
-@import "compat.inc";
-@import "outercurve.inc";
+@import @"version.inc";
 
-#define { 
-    flavor: "${comp??vc10}"; 
-    arch : "${plat??x86}";
-}
-
-package {
-    name: "libxml2[${flavor}]";
-    version: "${package-version}";
-    arch : "${arch}";
-    
-    display-name: "libxml2";
-    location: "http://coapp.org/repository/${OutputFilename}";
-
-    feed: "http://coapp.org/repository/packages.atom.xml";
-    publisher: "CoApp Project";
-}
-
-license[MIT] {
-    license-url: "http://www.opensource.org/licenses/mit-license.html";
-    license-type: "MIT";
-}
-
-files[files-to-sign] {
-    include: { 
-        dlls,
-        exes
-    };    
-}
-
-files[dlls] {
-    root: @"..\${flavor}-${arch}\bin.msvc\";
-  
-    include: {
-        "libxml2.dll",
-    };
-    
-    trim-path: all;
+configurations {
+		
 };
 
-files[exes] {
-    root: @"..\${flavor}-${arch}\bin.msvc\";
-  
-    include: {
-        "xmlcatalog.exe",
-		"xmllint.exe",
-    };
+nuget {
+	// the nuspec file metadata. Gets created/updated on build
+	nuspec {
+		id = libxml2;
+		version : ${package-version};
+		title: libxml2;
+		authors: {Daniel Veillard, Bjorn Reese, William Brack, Igor Zlatkovic, Aleksey Sanin};
+		owners: {CoApp Project, Garrett Serack};
+		licenseUrl: "http://opensource.org/licenses/mit-license.html";
+		projectUrl: "http://github.com/coapp-packages/libxml2";
+		iconUrl: "http://xmlsoft.org/Libxml2-Logo-180x168.gif";
+		requireLicenseAcceptance:false;
+		summary:libxml2;
+		description: @"libxml2 homepage:  http://xmlsoft.org/";
+		releaseNotes: "Release of libxml2 2.7.8 libraries.";
+		copyright: Copyright 2013;
+		tags: { xml, libxml2, native, CoApp };
+
+	};
+
+	// the files that go into the content folders
+	// (inserted into the nuspec file)
+	files {
+		include: { ..\include\libxml\*.h };
+
+		docs: { ..\doc\**\* };
     
-    trim-path: all;
-};
+		[Win32,v110,dynamic,cdecl,debug] { 
+			lib: { .\libxml2\output\v110\win32\debug\DynamicLibrary\cdecl\lib\libxml2.lib };
+			bin: { .\libxml2\output\v110\win32\debug\DynamicLibrary\cdecl\lib\libxml2.dll };
+            symbols += { .\libxml2\output\v110\win32\debug\DynamicLibrary\cdecl\lib\libxml2.pdb };
+		}
 
-requires {
-    package: "zlib[${flavor}]-1.2.5-${Package.Architecture}-${Package.PublicKeyToken}";
-	package: "libiconv[${flavor}]-1.14.0-${Package.Architecture}-${Package.PublicKeyToken}";
+		[x64,v110,dynamic,cdecl,debug] {
+			lib: { .\libxml2\output\v110\x64\debug\DynamicLibrary\cdecl\lib\libxml2.lib };
+			bin: { .\libxml2\output\v110\x64\debug\DynamicLibrary\cdecl\lib\libxml2.dll };
+            symbols += { .\libxml2\output\v110\x64\debug\DynamicLibrary\cdecl\lib\libxml2.pdb };
+		}
+		
+		[Win32,v110,static,cdecl,debug] {
+			lib: { .\libxml2\output\v110\win32\debug\StaticLibrary\cdecl\lib\libxml2-static.lib };
+		}
+
+		[x64,v110,static,cdecl,debug] {
+			lib: { .\libxml2\output\v110\x64\debug\StaticLibrary\cdecl\lib\libxml2-static.lib };
+		}
+
+		[Win32,v100,dynamic,cdecl,debug] { 
+			lib: { .\libxml2\output\v100\win32\debug\DynamicLibrary\cdecl\lib\libxml2.lib };
+			bin: { .\libxml2\output\v100\win32\debug\DynamicLibrary\cdecl\lib\libxml2.dll };
+            symbols += { .\libxml2\output\v100\win32\debug\DynamicLibrary\cdecl\lib\libxml2.pdb };
+		}
+
+		[x64,v100,dynamic,cdecl,debug] {
+			lib: { .\libxml2\output\v100\x64\debug\DynamicLibrary\cdecl\lib\libxml2.lib };
+			bin: { .\libxml2\output\v100\x64\debug\DynamicLibrary\cdecl\lib\libxml2.dll };
+            symbols += { .\libxml2\output\v100\x64\debug\DynamicLibrary\cdecl\lib\libxml2.pdb };
+		}
+		
+		[Win32,v100,static,cdecl,debug] {
+			lib: { .\libxml2\output\v100\win32\debug\StaticLibrary\cdecl\lib\libxml2-static.lib };
+		}
+
+		[x64,v100,static,cdecl,debug] {
+			lib: { .\libxml2\output\v100\x64\debug\StaticLibrary\cdecl\lib\libxml2-static.lib };
+		}
+
+		[Win32,v110,dynamic,cdecl,release] { 
+			lib: { .\libxml2\output\v110\win32\release\DynamicLibrary\cdecl\lib\libxml2.lib };
+			bin: { .\libxml2\output\v110\win32\release\DynamicLibrary\cdecl\lib\libxml2.dll };
+            symbols += { .\libxml2\output\v110\win32\release\DynamicLibrary\cdecl\lib\libxml2.pdb };
+		}
+
+		[x64,v110,dynamic,cdecl,release] {
+			lib: { .\libxml2\output\v110\x64\release\DynamicLibrary\cdecl\lib\libxml2.lib };
+			bin: { .\libxml2\output\v110\x64\release\DynamicLibrary\cdecl\lib\libxml2.dll };
+            symbols += { .\libxml2\output\v110\x64\release\DynamicLibrary\cdecl\lib\libxml2.pdb };
+		}
+		
+		[Win32,v110,static,cdecl,release] {
+			lib: { .\libxml2\output\v110\win32\release\StaticLibrary\cdecl\lib\libxml2-static.lib };
+		}
+
+		[x64,v110,static,cdecl,release] {
+			lib: { .\libxml2\output\v110\x64\release\StaticLibrary\cdecl\lib\libxml2-static.lib };
+		}
+
+		[Win32,v100,dynamic,cdecl,release] { 
+			lib: { .\libxml2\output\v100\win32\release\DynamicLibrary\cdecl\lib\libxml2.lib };
+			bin: { .\libxml2\output\v100\win32\release\DynamicLibrary\cdecl\lib\libxml2.dll };
+            symbols += { .\libxml2\output\v100\win32\release\DynamicLibrary\cdecl\lib\libxml2.pdb };
+		}
+
+		[x64,v100,dynamic,cdecl,release] {
+			lib: { .\libxml2\output\v100\x64\release\DynamicLibrary\cdecl\lib\libxml2.lib };
+			bin: { .\libxml2\output\v100\x64\release\DynamicLibrary\cdecl\lib\libxml2.dll };
+            symbols += { .\libxml2\output\v100\x64\release\DynamicLibrary\cdecl\lib\libxml2.pdb };
+		}
+		
+		[Win32,v100,static,cdecl,release] {
+			lib: { .\libxml2\output\v100\win32\release\StaticLibrary\cdecl\lib\libxml2-static.lib };
+		}
+
+		[x64,v100,static,cdecl,release] {
+			lib: { .\libxml2\output\v100\x64\release\StaticLibrary\cdecl\lib\libxml2-static.lib };
+		}
+
+	};
+
+	// the VC++ .props file that gets generated and inserted into the ${d_content} folder
+	props { 
+		// we're going to generate a number of properties anyway. 
+        // so even if the packager doesn't specify the props object 
+        // we're going to make this file.
+	};
+
+	// the VC++ .targets file that gets generated and inserted into the ${d_content} folder
+	targets {
+		// every configuration needs to reference the include directories.
+		/*
+        Defines += ??;
+		[dynamic]
+			Defines += ??;
+		[stdcall]
+			Defines += ??;
+		*/
+	};
 }
 
-
-metadata {
-    summary: "libxml2";
-    description:  @"libxml2"; 
-
-    icon: @"libxml2.png";
-    
-    author-version : "2.7.8";
-    bug-tracker: "https://github.com/coapp-packages/libxml2/issues";
-    stability : "0";
-    licenses : {
-        MIT
-    };
-}
-
-application {
-    include : {
-        exes,
-    };
-}
-
-package-composition {
-    symlinks : { 
-        exes => @"${bin}\${each.Name}" = @"${packagedir}\${each.Name}";
-    };
-}
-
-manifest[things-that-need-them] {
-    // all of our EXEs need to get the manifest entries for the assemblies we're creating in this package
-    
-    assembly : {
-        "libxml2[${flavor}]",
-    };
-    
-    include : { 
-        exes
-    };
-}
-
-manifest[things-that-need-them2] {
-    // all of our EXEs need to get the manifest entries for the assemblies we're creating in this package
-    
-    assembly : {
-        "zlib[${flavor}]",
-		"libiconv[${flavor}]",
-    };
-    
-    include : { 
-        dlls,
-        exes
-    };
-}
-
-assembly[libxml2[${flavor}]] {
-    include : {
-        dlls
-    };
-}
-
-signing {
-    attributes : {
-        company="Outercurve Foundation",
-        description="libxml2",
-        product-name="libxml2",
-        product-version="${package-version}",
-        file-version="${package-version}",
-    };
-    
-    replace-signature: true; 
-    include: { 
-        files-to-sign
-    };    
-}

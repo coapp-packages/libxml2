@@ -169,6 +169,14 @@
   <Import Condition="exists('$(MSBuildThisFileDirectory)\packages\libiconv\build\native\libiconv.targets')" Project="$(MSBuildThisFileDirectory)\packages\libiconv\build\native\libiconv.targets" />
   <Import Condition="exists('$(MSBuildThisFileDirectory)\packages\libiconv.redist\build\native\libiconv.redist.targets')" Project="$(MSBuildThisFileDirectory)\packages\libiconv.redist\build\native\libiconv.redist.targets" />
   <ImportGroup Label="ExtensionTargets" />
+  <Target Name="DepPackages">
+    <Exec 
+        Command="
+            nuget install .\packages.config -ExcludeVersion -OutputDirectory .\packages >nul
+        "
+        WorkingDirectory="$(MSBuildThisFileDirectory)" 
+        Condition="!Exists('$(MSBuildThisFileDirectory)packages')" />
+  </Target>
   <Target Name="Version_File">
     <Exec 
         Command="
@@ -177,6 +185,6 @@
         WorkingDirectory="$(MSBuildThisFileDirectory)..\..\win32\" />
   </Target>
   <PropertyGroup>
-    <BuildDependsOn>Version_File;Info;$(BuildDependsOn)</BuildDependsOn>
+    <BuildDependsOn>DepPackages;Version_File;Info;$(BuildDependsOn)</BuildDependsOn>
   </PropertyGroup>
 </Project>
