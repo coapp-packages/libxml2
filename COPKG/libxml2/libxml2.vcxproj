@@ -28,7 +28,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v110</PlatformToolset>
     <CallingConvention>Cdecl</CallingConvention>
-    <LibName>libbz2</LibName>
+    <LibName>$(ProjectName)</LibName>
   </PropertyGroup>
   <Target Name="Info" BeforeTargets="Build">
     <Message Text="  Configuration     :  '$(Configuration)'" />
@@ -67,16 +67,18 @@
     <OutNameSuffix Condition="'$(CallingConvention)|$(ConfigurationType)'=='stdcall|StaticLibrary'">-static-stdcall</OutNameSuffix>
     <OutNameSuffix Condition="'$(CallingConvention)|$(ConfigurationType)'=='stdcall|ltcg'">-static-stdcall-ltcg</OutNameSuffix>
     <OutName>$(ProjectName)$(OutNameSuffix)</OutName>
-    <OutDir>..\..\Output\$(PlatformToolset)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>.\$(PlatformToolset)\$(Platform)\$(Configuration)\$(ConfigurationType)\$(CallingConvention)\$(ProjectName)\</IntDir>
+    <ProjectRootDir Condition="'$(SolutionDir)' != ''">$(SolutionDir)</ProjectRootDir> 
+    <ProjectRootDir Condition="'$(SolutionDir)' == ''">$(MSBuildThisFileDirectory)..\..\</ProjectRootDir> 
+    <OutDir>$(ProjectRootDir)Output\$(PlatformToolset)\$(Platform)\$(Configuration)\$(ConfigurationType)\$(CallingConvention)\</OutDir> 
+    <IntDir>$(ProjectRootDir)Intermediate\$(PlatformToolset)\$(Platform)\$(Configuration)\$(ConfigurationType)\$(CallingConvention)\</IntDir>
     <OutBinDir>$(OutDir)bin\</OutBinDir>
     <OutLibDir>$(OutDir)lib\</OutLibDir>
     <TargetName>lib\$(OutName)</TargetName>
-    <CallingConvention-zlib>%(CallingConvention)</CallingConvention-zlib>
+    <CallingConvention-zlib>$(CallingConvention)</CallingConvention-zlib>
     <Linkage-zlib Condition="'$(ConfigurationType)'=='DynamicLibrary'">dynamic</Linkage-zlib>
     <Linkage-zlib Condition="'$(ConfigurationType)'=='StaticLibrary'">static</Linkage-zlib>
     <Linkage-zlib Condition="'$(ConfigurationType)'=='ltcg'">static</Linkage-zlib>
-    <CallingConvention-libiconv>%(CallingConvention)</CallingConvention-libiconv>
+    <CallingConvention-libiconv>$(CallingConvention)</CallingConvention-libiconv>
     <Linkage-libiconv Condition="'$(ConfigurationType)'=='DynamicLibrary'">dynamic</Linkage-libiconv>
     <Linkage-libiconv Condition="'$(ConfigurationType)'=='StaticLibrary'">static</Linkage-libiconv>
     <Linkage-libiconv Condition="'$(ConfigurationType)'=='ltcg'">static</Linkage-libiconv>
@@ -91,13 +93,11 @@
       <RuntimeLibrary Condition="'$(Configuration)|$(ConfigurationType)'=='Debug|StaticLibrary' Or '$(Configuration)|$(ConfigurationType)'=='Debug|ltcg'">MultiThreadedDebug</RuntimeLibrary>
       <RuntimeLibrary Condition="'$(Configuration)|$(ConfigurationType)'=='Release|DynamicLibrary'">MultiThreadedDLL</RuntimeLibrary>
       <RuntimeLibrary Condition="'$(Configuration)|$(ConfigurationType)'=='Release|StaticLibrary' Or '$(Configuration)|$(ConfigurationType)'=='Release|ltcg'">MultiThreaded</RuntimeLibrary>
-      <CallingConvention>%(CallingConvention)</CallingConvention>
+      <CallingConvention>$(CallingConvention)</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>wsock32.lib;ws2_32.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ImportLibrary>
-      </ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
