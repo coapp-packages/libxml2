@@ -31,86 +31,18 @@ nuget {
 
 		docs: { ..\doc\**\* };
     
-		[Win32,v110,dynamic,cdecl,debug] { 
-			lib: { .\libxml2\output\v110\win32\debug\DynamicLibrary\cdecl\lib\libxml2.lib };
-			bin: { .\libxml2\output\v110\win32\debug\DynamicLibrary\cdecl\lib\libxml2.dll };
-            symbols += { .\libxml2\output\v110\win32\debug\DynamicLibrary\cdecl\lib\libxml2.pdb };
-		}
-
-		[x64,v110,dynamic,cdecl,debug] {
-			lib: { .\libxml2\output\v110\x64\debug\DynamicLibrary\cdecl\lib\libxml2.lib };
-			bin: { .\libxml2\output\v110\x64\debug\DynamicLibrary\cdecl\lib\libxml2.dll };
-            symbols += { .\libxml2\output\v110\x64\debug\DynamicLibrary\cdecl\lib\libxml2.pdb };
-		}
-		
-		[Win32,v110,static,cdecl,debug] {
-			lib: { .\libxml2\output\v110\win32\debug\StaticLibrary\cdecl\lib\libxml2-static.lib };
-		}
-
-		[x64,v110,static,cdecl,debug] {
-			lib: { .\libxml2\output\v110\x64\debug\StaticLibrary\cdecl\lib\libxml2-static.lib };
-		}
-
-		[Win32,v100,dynamic,cdecl,debug] { 
-			lib: { .\libxml2\output\v100\win32\debug\DynamicLibrary\cdecl\lib\libxml2.lib };
-			bin: { .\libxml2\output\v100\win32\debug\DynamicLibrary\cdecl\lib\libxml2.dll };
-            symbols += { .\libxml2\output\v100\win32\debug\DynamicLibrary\cdecl\lib\libxml2.pdb };
-		}
-
-		[x64,v100,dynamic,cdecl,debug] {
-			lib: { .\libxml2\output\v100\x64\debug\DynamicLibrary\cdecl\lib\libxml2.lib };
-			bin: { .\libxml2\output\v100\x64\debug\DynamicLibrary\cdecl\lib\libxml2.dll };
-            symbols += { .\libxml2\output\v100\x64\debug\DynamicLibrary\cdecl\lib\libxml2.pdb };
-		}
-		
-		[Win32,v100,static,cdecl,debug] {
-			lib: { .\libxml2\output\v100\win32\debug\StaticLibrary\cdecl\lib\libxml2-static.lib };
-		}
-
-		[x64,v100,static,cdecl,debug] {
-			lib: { .\libxml2\output\v100\x64\debug\StaticLibrary\cdecl\lib\libxml2-static.lib };
-		}
-
-		[Win32,v110,dynamic,cdecl,release] { 
-			lib: { .\libxml2\output\v110\win32\release\DynamicLibrary\cdecl\lib\libxml2.lib };
-			bin: { .\libxml2\output\v110\win32\release\DynamicLibrary\cdecl\lib\libxml2.dll };
-            symbols += { .\libxml2\output\v110\win32\release\DynamicLibrary\cdecl\lib\libxml2.pdb };
-		}
-
-		[x64,v110,dynamic,cdecl,release] {
-			lib: { .\libxml2\output\v110\x64\release\DynamicLibrary\cdecl\lib\libxml2.lib };
-			bin: { .\libxml2\output\v110\x64\release\DynamicLibrary\cdecl\lib\libxml2.dll };
-            symbols += { .\libxml2\output\v110\x64\release\DynamicLibrary\cdecl\lib\libxml2.pdb };
-		}
-		
-		[Win32,v110,static,cdecl,release] {
-			lib: { .\libxml2\output\v110\win32\release\StaticLibrary\cdecl\lib\libxml2-static.lib };
-		}
-
-		[x64,v110,static,cdecl,release] {
-			lib: { .\libxml2\output\v110\x64\release\StaticLibrary\cdecl\lib\libxml2-static.lib };
-		}
-
-		[Win32,v100,dynamic,cdecl,release] { 
-			lib: { .\libxml2\output\v100\win32\release\DynamicLibrary\cdecl\lib\libxml2.lib };
-			bin: { .\libxml2\output\v100\win32\release\DynamicLibrary\cdecl\lib\libxml2.dll };
-            symbols += { .\libxml2\output\v100\win32\release\DynamicLibrary\cdecl\lib\libxml2.pdb };
-		}
-
-		[x64,v100,dynamic,cdecl,release] {
-			lib: { .\libxml2\output\v100\x64\release\DynamicLibrary\cdecl\lib\libxml2.lib };
-			bin: { .\libxml2\output\v100\x64\release\DynamicLibrary\cdecl\lib\libxml2.dll };
-            symbols += { .\libxml2\output\v100\x64\release\DynamicLibrary\cdecl\lib\libxml2.pdb };
-		}
-		
-		[Win32,v100,static,cdecl,release] {
-			lib: { .\libxml2\output\v100\win32\release\StaticLibrary\cdecl\lib\libxml2-static.lib };
-		}
-
-		[x64,v100,static,cdecl,release] {
-			lib: { .\libxml2\output\v100\x64\release\StaticLibrary\cdecl\lib\libxml2-static.lib };
-		}
-
+		("v100,v110", "Win32,x64", "release,debug", "Dynamic", "cdecl") => {
+			[${0},${1},${2},${3},${4}] {
+				lib:     { .\libxml2\output\${0}\${1}\${2}\${3}\${4}\lib\libxml2.lib };
+				bin:     { .\libxml2\output\${0}\${1}\${2}\${3}\${4}\lib\libxml2.dll };
+				symbols: { .\libxml2\output\${0}\${1}\${2}\${3}\${4}\lib\libxml2.pdb };
+			};
+		};
+		("v100,v110", "Win32,x64", "release,debug", "Static,ltcg", "cdecl") => {
+			[${0},${1},${2},${3},${4}] {
+				lib:     { .\libxml2\output\${0}\${1}\${2}\${3}\${4}\lib\libxml2.lib };
+			};
+		};
 	};
 
 	// the VC++ .props file that gets generated and inserted into the ${d_content} folder

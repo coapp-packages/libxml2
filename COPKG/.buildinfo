@@ -1,183 +1,31 @@
-@import "version.inc";
+@import default_tools;
 
-#define {    NewVersion : "${package-version++}";}
+default {
 
-#product-info  {
-	product-name: "libxml2";
-	version: "2.7.8";
-	original-source-location: "git://git.gnome.org/libxml2";
-	original-source-website: "http://git.gnome.org/browse/libxml2/";
-	license: "X11 license";
-	packager: "Vincent Povirk <madewokherd@gmail.com>";
-}
+	("v110, v100", "Win32, x64", "Debug,Release", "Dynamic, Static, ltcg", "cdecl") => {
+		.PushEnvironment {};
+		.LoadSystemEnvironment {};
+        .SetEnvironmentFromTarget.Target = "VC_${0}_${1}";
+		.Message.Text = @"
 
-test {
-    set: {
-        COMP="${COMP??vc10}";
-        PLAT="${PLAT??x86, x64}";
-    };
-    default : false;
-    build-command: @"
-        if ""${BUILT}"" neq ""true"" ptk release --nologo --COMP=""${COMP}"" --PLAT=""${PLAT}""
+
+        Env:        ${0}-${1}  :  ${2}  ${3}  ${4}
+        EnvExists:  $(IsEnvironmentValid)";
         
-        REM Start tests here...
-        for %%A in (${COMP}) do (
-            for %%B in (${PLAT}) do (
-                for %%E in (runtest.exe, runsuite.exe, testapi.exe, testThreadsWin32.exe) do (
-                    coapp create-symlink %CD%\%%A-%%B\bin.msvc\%%E %CD%\%%E
-                    REM mklink %%E .\%%A-%%B\bin.msvc\%%E
-                    simplesigner --nologo --reference-assembly=""zlib[%%A], Version=1.2.5.0, PublicKeyToken=1e373a58e25250cb, ProcessorArchitecture=%%B"" --reference-assembly=""libiconv[%%A], Version=1.14.0.0, PublicKeyToken=1e373a58e25250cb, ProcessorArchitecture=%%B"" %%E || goto failed
-                )
-                coapp create-symlink %CD%\%%A-%%B\bin.msvc\libxml2.dll %CD%\libxml2.dll
-                echo Running TestAPI...
-                testapi.exe || goto failure
-                echo Running TestThreadsWin32...
-                testThreadsWin32.exe || goto failure
-                REM echo Running RunTest...
-                REM runtest.exe || goto failure
-                REM echo Running RunSuite...
-                REM runsuite.exe || goto failure
-                for %%E in (runtest.exe, runsuite.exe, testapi.exe, testThreadsWin32.exe, libxml2.dll) do (
-                    del %%E
-                )
-            )
-        )
-        goto :eof
-        :failure
-        for %%E in (runtest.exe, runsuite.exe, testapi.exe, testThreadsWin32.exe, libxml2.dll) do (
-            del %%E
-        )
-        goto failed
+        .Exec {
+            Condition="$(IsEnvironmentValid)";
+            Command = @"msbuild $(MSBuildThisFileDirectory)libxml2\libxml2.vcxproj /p:PlatformToolset=${0};Platform=${1};Configuration=${2};UsesConfigurationType=${3};CallingConvention=${4}";
+        };
         
-    ";
-};
-
-package {
-    
-    default : false;
-    uses : {
-        update-version,
-        sign,
-    };
-    
-    set: {
-        COMP="${COMP??vc10}";
-        PLAT="${PLAT??x86, x64}";
-    };
-
-    targets: { 
-        (COMP,PLAT) => @"copkg\libxml2-dev[${0}]-${NewVersion}-${1}.msi",
-    };
-    
-    build-command : @"
-        cd COPKG
-        autopackage libxml2-dev-common.autopkg || goto failed
-        for %%A in (${COMP}) do (
-            for %%B in (${PLAT}) do (
-                autopackage --COMP=%%A --PLAT=%%B libxml2.autopkg libxml2-dev.autopkg || goto failed
-            )
-        )
-    ";
-
-	clean-command: @"del COPKG\*.msi COPKG\*.wixpdb";
-	
-};
-
-
-update-version {
-    default : false;
-    
-    build-command : @"
-        REM auto-increment version.inc file...
-        if ""${noversion}"" == ""true"" goto :endver
-        pushd COPKG
-        setlocal EnableDelayedExpansion
-        set VERSTRING=#define { package-version: ${NewVersion}; }
-        echo !VERSTRING! > version.inc
-        popd
-        :endver
-    ";
-}
-
-release {
-    set: {
-        BuildCfg="Release";
-        COMP="${COMP??vc10}";
-        PLAT="${PLAT??x86, x64}";
-    };
-
-    build-command: @"
-        for %%A in (${COMP}) do (
-            for %%B in (${PLAT}) do (
-                ptk --nologo base --COMP=%%A --PLAT=%%B
-            )
-        )
-    ";
-    
-    clean-command: @"
-        for %%A in (${COMP}) do (
-            for %%B in (${PLAT}) do (
-                ptk --nologo clean base --COMP=%%A --PLAT=%%B
-            )
-        )
-    ";
-};
-
-sign {
-    default : false;
-    build-command: @"
-        if ""${BUILT}"" neq ""true"" ptk release --nologo --COMP=""${COMP}"" --PLAT=""${PLAT}""
-        for %%A in (${COMP}) do (
-            for %%B in (${PLAT}) do (
-                simplesigner.exe --nologo --sign %%A-%%B\bin.msvc\**.dll %%A-%%B\bin.msvc\**.exe
-            )
-        )
-        ";
-};
-
-base {
-    set: {
-        COMP="${COMP??vc10}";
-        PLAT="${PLAT??x86}";
-    };
-    
-    compiler: "${COMP}";
-    platform: "${PLAT}";
-
-    requires: "libiconv-dev[${COMP}]-1.14.0-${PLAT}-1e373a58e25250cb";
-    requires: "zlib-dev[${COMP}]-1.2.5-${PLAT}-1e373a58e25250cb";
-    
-    targets: {
-		"${COMP}-${PLAT}\bin.msvc\libxml2.dll",
-		"${COMP}-${PLAT}\bin.msvc\libxml2.lib",
-		"${COMP}-${PLAT}\bin.msvc\libxml2_a.lib",
-		"${COMP}-${PLAT}\bin.msvc\libxml2_a_dll.lib",
-		"${COMP}-${PLAT}\bin.msvc\xmlcatalog.exe",
-		"${COMP}-${PLAT}\bin.msvc\xmllint.exe",
+        .PopEnvironment{};
 	};
 	
-    build-command:@"
-        REM this makes it so that DLLs can have their own SxS Activation Context in an embedded resource.
-        echo %CL% | findstr ISOLATION_AWARE || set CL=%CL% /D ISOLATION_AWARE_ENABLED /U NOUSER 
-
-        mkdir ${COMP}-${PLAT}
-            copy win32\wince ${COMP}-${PLAT}\wince
-            copy win32\configure.js ${COMP}-${PLAT}\configure.js 
-            copy win32\defgen.xsl ${COMP}-${PLAT}\defgen.xsl 
-            copy win32\libxml2.def.src ${COMP}-${PLAT}\libxml2.def.src 
-            copy win32\Makefile.msvc ${COMP}-${PLAT}\Makefile.msvc
-
-        pushd ${COMP}-${PLAT}
-            cscript configure.js zlib=yes ""include=%AllUsersProfile%/include/libiconv;%AllUsersProfile%/include/zlib"" ""lib=%AllUsersProfile%/lib/${PLAT}""
-            nmake /f Makefile.msvc
-        popd
-	";
-    
-    clean-command:@"
-		rem We can't do a make clean because it'll fail without configure.
-		erase config.h > nul 2> nul
-		erase include\libxml\xmlversion.h > nul 2> nul
-        if exist ${COMP}-${PLAT} rmdir /s /q ${COMP}-${PLAT} > nul 2> nul
-    ";
 };
 
+clean {
+    .RemoveDir.Directories = @"$(MSBuildThisFileDirectory)libxml2\intermediate";
+};
+
+nuke {
+    .RemoveDir.Directories = @"$(MSBuildThisFileDirectory)libxml2\output";
+};

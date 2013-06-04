@@ -30,17 +30,7 @@
     <CallingConvention>Cdecl</CallingConvention>
     <LibName>$(ProjectName)</LibName>
   </PropertyGroup>
-  <Target Name="Info" BeforeTargets="Build">
-    <Message Text="  Configuration     :  '$(Configuration)'" />
-    <Message Text="  PlatformToolset   :  '$(PlatformToolset)'" />
-    <Message Text="  Platform          :  '$(Platform)'" />
-    <Message Text="  ConfigurationType :  '$(ConfigurationType)'" />
-    <Message Text="  CallingConvention :  '$(CallingConvention)'" />
-    <Message Condition="exists('$(MSBuildThisFileDirectory)\packages\libiconv.redist\build\native\libiconv.redist.targets')" 
-             Text="  libiconv :  'Exists'" />
-    <Message Condition="exists('$(MSBuildThisFileDirectory)\packages\zlib.redist\build\native\zlib.redist.targets')" 
-             Text="  zlib :  'Exists'" />
-  </Target>
+  <Import Project="$(CoAppEtcDirectory)vcxproj.inc" Condition="Exists('$(CoAppEtcDirectory)vcxproj.inc')" />
   <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
@@ -60,28 +50,12 @@
   <PropertyGroup>
     <LinkIncremental Condition="'$(Configuration)'=='Release'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)'=='Debug'">true</LinkIncremental>
-    <OutNameSuffix Condition="'$(CallingConvention)|$(ConfigurationType)'=='Cdecl|DynamicLibrary'"></OutNameSuffix>
-    <OutNameSuffix Condition="'$(CallingConvention)|$(ConfigurationType)'=='Cdecl|StaticLibrary'">-static</OutNameSuffix>
-    <OutNameSuffix Condition="'$(CallingConvention)|$(ConfigurationType)'=='Cdecl|ltcg'">-static-ltcg</OutNameSuffix>
-    <OutNameSuffix Condition="'$(CallingConvention)|$(ConfigurationType)'=='stdcall|DynamicLibrary'">-stdcall</OutNameSuffix>
-    <OutNameSuffix Condition="'$(CallingConvention)|$(ConfigurationType)'=='stdcall|StaticLibrary'">-static-stdcall</OutNameSuffix>
-    <OutNameSuffix Condition="'$(CallingConvention)|$(ConfigurationType)'=='stdcall|ltcg'">-static-stdcall-ltcg</OutNameSuffix>
-    <OutName>$(ProjectName)$(OutNameSuffix)</OutName>
-    <ProjectRootDir Condition="'$(SolutionDir)' != ''">$(SolutionDir)</ProjectRootDir> 
-    <ProjectRootDir Condition="'$(SolutionDir)' == ''">$(MSBuildThisFileDirectory)..\..\</ProjectRootDir> 
-    <OutDir>$(ProjectRootDir)Output\$(PlatformToolset)\$(Platform)\$(Configuration)\$(ConfigurationType)\$(CallingConvention)\</OutDir> 
-    <IntDir>$(ProjectRootDir)Intermediate\$(PlatformToolset)\$(Platform)\$(Configuration)\$(ConfigurationType)\$(CallingConvention)\</IntDir>
-    <OutBinDir>$(OutDir)bin\</OutBinDir>
-    <OutLibDir>$(OutDir)lib\</OutLibDir>
-    <TargetName>lib\$(OutName)</TargetName>
     <CallingConvention-zlib>$(CallingConvention)</CallingConvention-zlib>
-    <Linkage-zlib Condition="'$(ConfigurationType)'=='DynamicLibrary'">dynamic</Linkage-zlib>
-    <Linkage-zlib Condition="'$(ConfigurationType)'=='StaticLibrary'">static</Linkage-zlib>
-    <Linkage-zlib Condition="'$(ConfigurationType)'=='ltcg'">static</Linkage-zlib>
+    <Linkage-zlib>$(UsesConfigurationType)</Linkage-zlib>
+    <Linkage-zlib_redist>$(UsesConfigurationType)</Linkage-zlib_redist>
     <CallingConvention-libiconv>$(CallingConvention)</CallingConvention-libiconv>
-    <Linkage-libiconv Condition="'$(ConfigurationType)'=='DynamicLibrary'">dynamic</Linkage-libiconv>
-    <Linkage-libiconv Condition="'$(ConfigurationType)'=='StaticLibrary'">static</Linkage-libiconv>
-    <Linkage-libiconv Condition="'$(ConfigurationType)'=='ltcg'">static</Linkage-libiconv>
+    <Linkage-libiconv>$(UsesConfigurationType)</Linkage-libiconv>
+    <Linkage-libiconv_redist>$(UsesConfigurationType)</Linkage-libiconv_redist>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -89,14 +63,8 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NOLIBTOOL;_WINDOWS;_MBCS;HAVE_WIN32_THREADS;HAVE_ZLIB_H;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary Condition="'$(Configuration)|$(ConfigurationType)'=='Debug|DynamicLibrary'">MultiThreadedDebugDLL</RuntimeLibrary>
-      <RuntimeLibrary Condition="'$(Configuration)|$(ConfigurationType)'=='Debug|StaticLibrary' Or '$(Configuration)|$(ConfigurationType)'=='Debug|ltcg'">MultiThreadedDebug</RuntimeLibrary>
-      <RuntimeLibrary Condition="'$(Configuration)|$(ConfigurationType)'=='Release|DynamicLibrary'">MultiThreadedDLL</RuntimeLibrary>
-      <RuntimeLibrary Condition="'$(Configuration)|$(ConfigurationType)'=='Release|StaticLibrary' Or '$(Configuration)|$(ConfigurationType)'=='Release|ltcg'">MultiThreaded</RuntimeLibrary>
-      <CallingConvention>$(CallingConvention)</CallingConvention>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>wsock32.lib;ws2_32.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -175,7 +143,7 @@
             nuget install .\packages.config -ExcludeVersion -OutputDirectory .\packages >nul
         "
         WorkingDirectory="$(MSBuildThisFileDirectory)" 
-        Condition="!Exists('$(MSBuildThisFileDirectory)packages')" />
+        Condition="Exists('$(MSBuildThisFileDirectory)packages.config')" />
   </Target>
   <Target Name="Version_File">
     <Exec 
