@@ -2,6 +2,11 @@
 
 default {
 
+    .Exec {
+        Condition="Exists('$(MSBuildThisFileDirectory)libxml2\packages.config')";
+        Command = @"nuget install $(MSBuildThisFileDirectory)libxml2\packages.config -x -OutputDirectory .\libxml2\packages >nul";
+    };
+
 	("v110, v100", "Win32, x64", "Debug,Release", "Dynamic, Static, ltcg", "cdecl") => {
 		.PushEnvironment {};
 		.LoadSystemEnvironment {};
